@@ -45,6 +45,8 @@ packages/<package>/
 
 - `name`: `@rust-js-replacements/<package>`, with `repository` (including `directory`),
   `homepage`, `bugs`, and `publishConfig: { "access": "public", "provenance": true }`.
+- `keywords`: the original package name first, then `rust`, `napi`, `wasm`, and the domain terms,
+  so that an npm search for the original also lists the replacement.
 - `files`: only what the main package ships (`dist`, the NAPI-RS loader, the WebAssembly module);
   binaries go to the per-platform packages. A `LICENSE` file in the package directory.
 - `type: "module"`, `engines` matching the original, `sideEffects: false`.

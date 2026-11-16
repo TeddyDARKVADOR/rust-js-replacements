@@ -2,6 +2,20 @@
   "name": "@rust-js-replacements/string-width",
   "version": "0.1.0",
   "description": "Rust-powered alternative to string-width: get the visual width of a string in terminal columns.",
+  "keywords": [
+    "string-width",
+    "rust",
+    "napi",
+    "wasm",
+    "webassembly",
+    "unicode",
+    "emoji",
+    "east-asian-width",
+    "terminal",
+    "width",
+    "columns",
+    "ansi"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
