@@ -2,7 +2,8 @@ name: Release
 
 # Publishes a package to npm when a tag <package>-v<version> is pushed (for example,
 # string-width-v0.1.0 publishes packages/string-width). It builds the native addon on every target,
-# then publishes one package per platform plus the main package.
+# then publishes one package per platform plus the main package, and creates a GitHub release with
+# the notes of that version from the package CHANGELOG.md.
 # One-time setup and the release steps are described in docs/RELEASING.md.
 on:
   push:
@@ -23,7 +24,7 @@ jobs:
       package-dir: ${{ steps.package.outputs.dir }}
     steps:
       - uses: actions/checkout@v4
-      - name: The tag must name a package and match the version in its package.json
+      - name: The tag must name a package, match its version, and have CHANGELOG.md notes
         id: package
         run: |
           package="${GITHUB_REF_NAME%-v*}"
@@ -32,9 +33,14 @@ jobs:
             echo "::error::Tag ${GITHUB_REF_NAME} does not name a package (${dir} not found)."
             exit 1
           fi
-          expected="${package}-v$(node -p "require('./${dir}/package.json').version")"
+          version="$(node -p "require('./${dir}/package.json').version")"
+          expected="${package}-v${version}"
           if [ "${GITHUB_REF_NAME}" != "${expected}" ]; then
             echo "::error::Tag ${GITHUB_REF_NAME} does not match ${dir}/package.json (expected ${expected})."
+            exit 1
+          fi
+          if ! grep -q "^## ${version}\( \|$\)" "${dir}/CHANGELOG.md" 2>/dev/null; then
+            echo "::error::${dir}/CHANGELOG.md has no section \"## ${version}\"."
             exit 1
           fi
           echo "dir=${dir}" >> "${GITHUB_OUTPUT}"
@@ -163,7 +169,7 @@ jobs:
       PACKAGE_DIR: ${{ needs.check.outputs.package-dir }}
     permissions:
       contents: read
-      id-token: write # npm provenance
+      id-token: write # trusted publishing and provenance
     steps:
       - uses: actions/checkout@v4
       - name: Install the toolchain from rust-toolchain.toml
@@ -177,7 +183,8 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+      # Trusted publishing (OIDC) needs npm 11.5.1 or later.
+      - run: npm install --global npm@11.19.0
       - run: pnpm install --frozen-lockfile
       - name: Build the JavaScript, the addon loader, and the WebAssembly module
         run: pnpm --filter "./${PACKAGE_DIR}" run build
@@ -190,11 +197,38 @@ jobs:
           path: ${{ env.PACKAGE_DIR }}/artifacts
       - name: Publish the platform packages, then the main package
         working-directory: ${{ env.PACKAGE_DIR }}
+        # No token: npm authenticates this workflow through trusted publishing, configured on
+        # npmjs.com for every published package (docs/RELEASING.md).
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
         run: |
           pnpm exec napi create-npm-dirs
           pnpm exec napi artifacts --output-dir artifacts --npm-dir npm
           pnpm exec napi pre-publish --npm-dir npm --no-gh-release
           npm publish
+
+  github-release:
+    name: Create the GitHub release
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_DIR: ${{ needs.check.outputs.package-dir }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release with the CHANGELOG.md section of this version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME##*-v}"
+          awk -v version="${version}" '
+            /^## / { inside = ($2 == version) ; next }
+            inside { print }
+          ' "${PACKAGE_DIR}/CHANGELOG.md" > notes.md
+          name="$(node -p "require('./${PACKAGE_DIR}/package.json').name")"
+          {
+            echo
+            echo "Install: \`npm install ${name}@${version}\`"
+          } >> notes.md
+          gh release create "${GITHUB_REF_NAME}" --title "${name} ${version}" --notes-file notes.md --verify-tag

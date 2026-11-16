@@ -25,49 +25,55 @@ need no Rust toolchain.
 
 The workflow:
 
-1. checks that the tag names a package and matches the version in its `package.json`;
+1. checks that the tag names a package, matches the version in its `package.json`, and that the
+   package `CHANGELOG.md` has a section for that version;
 2. builds the addon for the 8 targets (glibc targets with the NAPI-RS cross toolchain for
    glibc 2.17, musl targets with zig, macOS and Windows on their own runners) and loads the
    binaries that can run on the build machine;
 3. builds the main package, runs its tests, publishes the platform packages, then the main
-   package, with npm provenance.
+   package, with npm provenance;
+4. creates a GitHub release for the tag, with the `CHANGELOG.md` section of that version.
 
-## One-time setup
+## Authentication: trusted publishing
 
-1. **npm account** with two-factor authentication enabled.
-2. **npm organization** named `rust-js-replacements`: npmjs.com, your avatar, *Add Organization*,
-   free plan (unlimited public packages). If the name is taken, choose another scope and rename it
-   in `packages/*/package.json` (`name`), `catalog.json` (`packageName`), and the READMEs.
-3. **Access token**: npmjs.com, *Access Tokens*, *Generate New Token*, *Granular Access Token*:
-   - Expiration: the maximum allowed (write tokens expire; renew the secret when it does).
-   - *Bypass two-factor authentication*: checked (the workflow cannot type a 2FA code). It is off
-     by default and cannot be added to an existing token; without it, `npm publish` fails with
-     `EOTP`. npm plans to stop direct publishing with such tokens in January 2027, so switch to
-     trusted publishing (below) right after the first release.
-   - Packages and scopes: *Read and write*, for the `@rust-js-replacements` scope.
-4. **GitHub secret**: repository *Settings*, *Secrets and variables*, *Actions*,
-   *New repository secret*, name `NPM_TOKEN`, value: the token.
+The workflow holds no npm token. npm authenticates it through **trusted publishing** (OpenID
+Connect), configured on npmjs.com for each published package: *Settings*, *Trusted Publisher*,
+GitHub Actions, repository `TeddyDARKVADOR/rust-js-replacements`, workflow `release.yml`. It
+requires npm 11.5.1 or later, which the workflow installs.
 
-Optional, after the first release: configure **trusted publishing** on npmjs.com for each of the
-published packages (*Settings*, *Trusted Publisher*, GitHub Actions, repository
-`TeddyDARKVADOR/rust-js-replacements`, workflow `release.yml`). npm then authenticates the workflow
-without a token, and the `NPM_TOKEN` secret can be deleted. Trusted publishing can only be
-configured once a package exists, which is why the first release uses a token.
+Trusted publishing can only be configured on a package that exists. The first release of a new
+package (and of each of its platform packages) therefore needs a temporary granular access token:
+
+1. npmjs.com, *Access Tokens*, *Generate New Token*, *Granular Access Token*, with
+   *Bypass two-factor authentication* checked (it is off by default and cannot be added later;
+   without it, `npm publish` fails with `EOTP`), *Read and write* on the `@rust-js-replacements`
+   scope.
+2. Add it as the GitHub secret `NPM_TOKEN`, and in the publish step of `release.yml`, set
+   `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` and `registry-url: https://registry.npmjs.org` in
+   `actions/setup-node`.
+3. After the release, configure trusted publishing on every new package, revert the workflow, and
+   delete the token and the secret.
+
+npm stops accepting such tokens for direct publishing in January 2027. After that, create each new
+package by hand once (`npm publish` from your machine, with your 2FA code), then configure trusted
+publishing on it before the first release by the workflow.
 
 ## Releasing a version
 
-1. Set the new version in `packages/<package>/package.json` (for example, `0.1.0`), and update the
-   package README if behavior changed.
-2. Commit, push to `main`, and wait for CI to pass.
-3. Tag and push the tag:
+1. Set the new version in `packages/<package>/package.json` (for example, `0.1.1`).
+2. Add a section for it at the top of `packages/<package>/CHANGELOG.md`, with the heading
+   `## 0.1.1` (the version alone, as the workflow looks it up).
+3. Commit, push to `main`, and wait for CI to pass.
+4. Tag and push the tag:
 
    ```sh
-   git tag string-width-v0.1.0
-   git push origin string-width-v0.1.0
+   git tag string-width-v0.1.1
+   git push origin string-width-v0.1.1
    ```
 
-4. Follow the *Release* workflow in the *Actions* tab (about 10 to 15 minutes).
-5. Check the result:
+5. Follow the *Release* workflow in the *Actions* tab (about 10 to 15 minutes).
+6. Check the result. A newly published version can take a few minutes to appear on the registry
+   (a new package first shows a `0.0.0-stage` placeholder):
 
    ```sh
    npm view @rust-js-replacements/string-width
@@ -75,7 +81,7 @@ configured once a package exists, which is why the first release uses a token.
    node -e "import('@rust-js-replacements/string-width').then((m) => console.log(m.default('\u{53E4}')))"
    ```
 
-6. The website switches to the npm install instructions by itself (it queries the registry). Set
+7. The website shows the new version by itself (it queries the registry). For a first release, set
    `status` to `RELEASED` in `packages/<package>/catalog.json` and in the root README catalog.
 
 ## When a release fails

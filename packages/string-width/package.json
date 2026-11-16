@@ -1,6 +1,6 @@
 {
   "name": "@rust-js-replacements/string-width",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Rust-powered alternative to string-width: get the visual width of a string in terminal columns.",
   "keywords": [
     "string-width",
@@ -42,6 +42,7 @@
     }
   },
   "files": [
+    "CHANGELOG.md",
     "dist",
     "native/binding.cjs",
     "native/binding.d.cts",

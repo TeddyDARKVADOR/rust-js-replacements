@@ -1,4 +1,4 @@
-import { stripAnsiFromMalformed } from './ansi.ts';
+import { hasEscapeIntroducer, stripAnsi } from './ansi.ts';
 import type { Binding, Options, StringWidthApi } from './types.ts';
 
 // Any character outside printable ASCII (U+0020..U+007E) requires the Rust implementation.
@@ -6,7 +6,29 @@ import type { Binding, Options, StringWidthApi } from './types.ts';
 // answering it here avoids the cost of crossing the JavaScript/Rust boundary.
 const NON_PRINTABLE_ASCII = /[^\u0020-\u007E]/;
 
+// Up to this length, ANSI escape codes are stripped in JavaScript, as the original does: for short
+// colored ASCII, such as a log line, the result is then printable ASCII, answered without calling
+// into Rust. Longer strings are faster in Rust (measured crossover: about 150 to 300 code units).
+const SHORT_INPUT_LENGTH = 128;
+
 type NormalizedOptions = [ambiguousIsNarrow: boolean, countAnsiEscapeCodes: boolean];
+
+/**
+ * Returns the input without its ANSI escape codes when they must be stripped in JavaScript: for
+ * short strings (see above), and for strings that are not well-formed UTF-16 (see ansi.ts).
+ * Returns `undefined` when the Rust core handles the input unchanged.
+ */
+function stripInJavaScript(input: string, countAnsiEscapeCodes: boolean): string | undefined {
+  if (
+    countAnsiEscapeCodes ||
+    !hasEscapeIntroducer(input) ||
+    (input.length > SHORT_INPUT_LENGTH && input.isWellFormed())
+  ) {
+    return undefined;
+  }
+
+  return stripAnsi(input);
+}
 
 function normalizeOptions(options: Options): NormalizedOptions {
   // Same destructuring as the original: defaults apply only to `undefined`, `null` throws a
@@ -31,11 +53,12 @@ export function createApi(getBinding: () => Binding): StringWidthApi {
       return input.length;
     }
 
-    if (!countAnsiEscapeCodes) {
-      const stripped = stripAnsiFromMalformed(input);
-      if (stripped !== undefined) {
-        return binding.stringWidth(stripped, ambiguousIsNarrow, true);
-      }
+    const stripped = stripInJavaScript(input, countAnsiEscapeCodes);
+    if (stripped !== undefined) {
+      // Already stripped: Rust must not strip again, as the original strips only once.
+      return NON_PRINTABLE_ASCII.test(stripped)
+        ? binding.stringWidth(stripped, ambiguousIsNarrow, true)
+        : stripped.length;
     }
 
     return binding.stringWidth(input, ambiguousIsNarrow, countAnsiEscapeCodes);
@@ -49,8 +72,9 @@ export function createApi(getBinding: () => Binding): StringWidthApi {
 
     const [ambiguousIsNarrow, countAnsiEscapeCodes] = normalizeOptions(options);
     const widths = new Uint32Array(inputs.length);
-    const pendingInputs: string[] = [];
-    const pendingIndexes: number[] = [];
+    // Inputs measured in one call each: as given, and already stripped in JavaScript.
+    const pending = { inputs: [] as string[], indexes: [] as number[] };
+    const pendingStripped = { inputs: [] as string[], indexes: [] as number[] };
 
     for (let index = 0; index < inputs.length; index++) {
       const input: unknown = inputs[index];
@@ -63,23 +87,29 @@ export function createApi(getBinding: () => Binding): StringWidthApi {
         continue;
       }
 
-      const stripped = countAnsiEscapeCodes ? undefined : stripAnsiFromMalformed(input);
+      const stripped = stripInJavaScript(input, countAnsiEscapeCodes);
       if (stripped === undefined) {
-        pendingInputs.push(input);
-        pendingIndexes.push(index);
+        pending.inputs.push(input);
+        pending.indexes.push(index);
+      } else if (NON_PRINTABLE_ASCII.test(stripped)) {
+        pendingStripped.inputs.push(stripped);
+        pendingStripped.indexes.push(index);
       } else {
-        widths[index] = binding.stringWidth(stripped, ambiguousIsNarrow, true);
+        widths[index] = stripped.length;
       }
     }
 
-    if (pendingInputs.length > 0) {
-      const pendingWidths = binding.stringWidthMany(
-        pendingInputs,
-        ambiguousIsNarrow,
-        countAnsiEscapeCodes,
-      );
-      for (let index = 0; index < pendingIndexes.length; index++) {
-        widths[pendingIndexes[index] as number] = pendingWidths[index] as number;
+    for (const [batch, count] of [
+      [pending, countAnsiEscapeCodes],
+      [pendingStripped, true],
+    ] as const) {
+      if (batch.inputs.length === 0) {
+        continue;
+      }
+
+      const batchWidths = binding.stringWidthMany(batch.inputs, ambiguousIsNarrow, count);
+      for (let index = 0; index < batch.indexes.length; index++) {
+        widths[batch.indexes[index] as number] = batchWidths[index] as number;
       }
     }
 

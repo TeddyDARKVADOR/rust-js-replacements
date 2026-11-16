@@ -26,6 +26,7 @@ Create the package directory. Include only what the package needs:
 packages/<package>/
 |-- package.json
 |-- catalog.json           Website entry (see phase 7)
+|-- CHANGELOG.md           One `## <version>` section per release
 |-- README.md
 |-- tsconfig.json
 |-- tsconfig.build.json
@@ -47,8 +48,9 @@ packages/<package>/
   `homepage`, `bugs`, and `publishConfig: { "access": "public", "provenance": true }`.
 - `keywords`: the original package name first, then `rust`, `napi`, `wasm`, and the domain terms,
   so that an npm search for the original also lists the replacement.
-- `files`: only what the main package ships (`dist`, the NAPI-RS loader, the WebAssembly module);
-  binaries go to the per-platform packages. A `LICENSE` file in the package directory.
+- `files`: only what the main package ships (`CHANGELOG.md`, `dist`, the NAPI-RS loader, the
+  WebAssembly module); binaries go to the per-platform packages. A `LICENSE` file in the package
+  directory.
 - `type: "module"`, `engines` matching the original, `sideEffects: false`.
 - `exports` with `types`, a `browser` condition when there is a WebAssembly build, and `default`.
 - Scripts: `build`, `build:native`, `build:ts`, `typecheck`, `test`, `bench`, plus `build:wasm` and
@@ -98,8 +100,9 @@ the package README, including slower workloads.
   - Performance figures are never typed into `catalog.json`: the site reads them from the committed
     files in `benchmarks/results/`.
 - Make sure CI passes (`pnpm run lint`, `pnpm run test`, `cargo test --workspace`).
-- Release it by pushing a `<package>-v<version>` tag ([RELEASING.md](RELEASING.md)). The release
-  workflow needs no change for a new package.
+- Release it by pushing a `<package>-v<version>` tag ([RELEASING.md](RELEASING.md)), after adding
+  the `CHANGELOG.md` section of that version. The release workflow needs no change for a new
+  package, but its first release needs a one-time npm authentication step (see RELEASING.md).
 - Set the development status honestly:
 
 | Status | Criteria |

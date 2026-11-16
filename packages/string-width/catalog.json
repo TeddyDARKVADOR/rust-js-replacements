@@ -22,7 +22,7 @@
   "differences": [
     "Uses Unicode 17.0 tables, while the original follows the Unicode version of the runtime (Node.js 22.23 and 24.21 both use Unicode 17.0).",
     "The browser build must be initialized once with init() before use.",
-    "Short ANSI-colored ASCII strings are slower than with the original: crossing into Rust costs more than the work."
+    "Short ANSI-colored ASCII strings are on par with the original, not faster: they are handled in JavaScript, because crossing into Rust would cost more than the work."
   ],
   "usage": [
     "import stringWidth, { stringWidthMany } from '@rust-js-replacements/string-width';",
