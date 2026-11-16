@@ -20,7 +20,7 @@ Rules that every package follows:
 
 | Package | Original library | Status | Rust core | Node.js | Browser | Compatibility | Benchmarks | Docs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [`@rust-js-replacements/string-width`](packages/string-width) | [`string-width`](https://github.com/sindresorhus/string-width) 9.0.0 ([npm](https://www.npmjs.com/package/string-width)) | `BENCHMARKED` | Complete | NAPI-RS addon | WebAssembly | Full API; differential tests identical on Unicode 17.0 ([details](packages/string-width/README.md#compatibility)) | Linux x64, Node.js 22 and 24: non-ASCII text 2.7x to 15x faster; long colored logs 2.0x to 21x faster; short ANSI-colored ASCII 0.65x to 0.88x (slower) ([details](packages/string-width/README.md#performance)) | [README](packages/string-width/README.md) |
+| [`@rust-js-replacements/string-width`](packages/string-width) | [`string-width`](https://github.com/sindresorhus/string-width) 9.0.0 ([npm](https://www.npmjs.com/package/string-width)) | `RELEASED` (npm 0.1.0) | Complete | NAPI-RS addon | WebAssembly | Full API; differential tests identical on Unicode 17.0 ([details](packages/string-width/README.md#compatibility)) | Linux x64, Node.js 22 and 24: non-ASCII text 2.7x to 15x faster; long colored logs 2.0x to 21x faster; short ANSI-colored ASCII 0.65x to 0.88x (slower) ([details](packages/string-width/README.md#performance)) | [README](packages/string-width/README.md) |
 
 Statuses, in order: `RESEARCH`, `PROTOTYPE`, `IMPLEMENTATION`, `COMPATIBILITY`, `BENCHMARKED`,
 `RELEASED`. Their criteria are defined in the [library template](docs/LIBRARY_TEMPLATE.md#phase-7-integration).

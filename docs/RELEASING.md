@@ -40,7 +40,10 @@ The workflow:
    in `packages/*/package.json` (`name`), `catalog.json` (`packageName`), and the READMEs.
 3. **Access token**: npmjs.com, *Access Tokens*, *Generate New Token*, *Granular Access Token*:
    - Expiration: the maximum allowed (write tokens expire; renew the secret when it does).
-   - *Bypass two-factor authentication*: checked (the workflow cannot type a 2FA code).
+   - *Bypass two-factor authentication*: checked (the workflow cannot type a 2FA code). It is off
+     by default and cannot be added to an existing token; without it, `npm publish` fails with
+     `EOTP`. npm plans to stop direct publishing with such tokens in January 2027, so switch to
+     trusted publishing (below) right after the first release.
    - Packages and scopes: *Read and write*, for the `@rust-js-replacements` scope.
 4. **GitHub secret**: repository *Settings*, *Secrets and variables*, *Actions*,
    *New repository secret*, name `NPM_TOKEN`, value: the token.
