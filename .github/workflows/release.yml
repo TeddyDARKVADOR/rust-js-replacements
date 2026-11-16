@@ -196,5 +196,5 @@ jobs:
         run: |
           pnpm exec napi create-npm-dirs
           pnpm exec napi artifacts --output-dir artifacts --npm-dir npm
-          pnpm exec napi pre-publish --npm-dir npm
+          pnpm exec napi pre-publish --npm-dir npm --no-gh-release
           npm publish
