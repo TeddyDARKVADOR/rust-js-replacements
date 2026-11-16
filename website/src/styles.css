@@ -414,3 +414,9 @@ details summary {
 .result .speed {
   justify-self: start;
 }
+
+.badge-npm {
+  border-color: transparent;
+  background: var(--color-faster-soft);
+  color: var(--color-faster);
+}

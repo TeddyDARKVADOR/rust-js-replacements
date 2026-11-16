@@ -1,0 +1,200 @@
+name: Release
+
+# Publishes a package to npm when a tag <package>-v<version> is pushed (for example,
+# string-width-v0.1.0 publishes packages/string-width). It builds the native addon on every target,
+# then publishes one package per platform plus the main package.
+# One-time setup and the release steps are described in docs/RELEASING.md.
+on:
+  push:
+    tags: ["*-v[0-9]*"]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  WASM_BINDGEN_VERSION: 0.2.130
+
+jobs:
+  check:
+    name: Check the tag
+    runs-on: ubuntu-latest
+    outputs:
+      package-dir: ${{ steps.package.outputs.dir }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: The tag must name a package and match the version in its package.json
+        id: package
+        run: |
+          package="${GITHUB_REF_NAME%-v*}"
+          dir="packages/${package}"
+          if [ ! -f "${dir}/package.json" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not name a package (${dir} not found)."
+            exit 1
+          fi
+          expected="${package}-v$(node -p "require('./${dir}/package.json').version")"
+          if [ "${GITHUB_REF_NAME}" != "${expected}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match ${dir}/package.json (expected ${expected})."
+            exit 1
+          fi
+          echo "dir=${dir}" >> "${GITHUB_OUTPUT}"
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          # glibc targets use the NAPI-RS cross toolchain (glibc 2.17), so that the binaries also
+          # load on older distributions.
+          - {
+              platform: linux-x64-gnu,
+              target: x86_64-unknown-linux-gnu,
+              os: ubuntu-latest,
+              flags: --use-napi-cross,
+              smoke: native,
+            }
+          - {
+              platform: linux-arm64-gnu,
+              target: aarch64-unknown-linux-gnu,
+              os: ubuntu-latest,
+              flags: --use-napi-cross,
+              smoke: none,
+            }
+          # musl targets (Alpine) are cross-compiled with zig.
+          - {
+              platform: linux-x64-musl,
+              target: x86_64-unknown-linux-musl,
+              os: ubuntu-latest,
+              flags: --cross-compile,
+              smoke: alpine,
+            }
+          - {
+              platform: linux-arm64-musl,
+              target: aarch64-unknown-linux-musl,
+              os: ubuntu-latest,
+              flags: --cross-compile,
+              smoke: none,
+            }
+          - {
+              platform: darwin-x64,
+              target: x86_64-apple-darwin,
+              os: macos-latest,
+              flags: "",
+              smoke: none,
+            }
+          - {
+              platform: darwin-arm64,
+              target: aarch64-apple-darwin,
+              os: macos-latest,
+              flags: "",
+              smoke: native,
+            }
+          - {
+              platform: win32-x64-msvc,
+              target: x86_64-pc-windows-msvc,
+              os: windows-latest,
+              flags: "",
+              smoke: native,
+            }
+          - {
+              platform: win32-arm64-msvc,
+              target: aarch64-pc-windows-msvc,
+              os: windows-latest,
+              flags: "",
+              smoke: none,
+            }
+    env:
+      PACKAGE_DIR: ${{ needs.check.outputs.package-dir }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the toolchain from rust-toolchain.toml and the target
+        run: |
+          rustup toolchain install
+          rustup target add ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - if: matrix.flags == '--cross-compile'
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build the native addon
+        working-directory: ${{ env.PACKAGE_DIR }}
+        run: >
+          pnpm exec napi build --platform --release
+          --manifest-path rust/node/Cargo.toml --package-json-path package.json
+          --target ${{ matrix.target }} ${{ matrix.flags }}
+          --output-dir artifacts --no-js
+      - name: Load the addon on this machine
+        if: matrix.smoke == 'native'
+        working-directory: ${{ env.PACKAGE_DIR }}
+        run: |
+          addon="$(ls artifacts/*.${{ matrix.platform }}.node)"
+          node -e "require('./${addon}')"
+      - name: Load the addon on Alpine Linux
+        if: matrix.smoke == 'alpine'
+        working-directory: ${{ env.PACKAGE_DIR }}
+        run: |
+          addon="$(basename "$(ls artifacts/*.${{ matrix.platform }}.node)")"
+          docker run --rm -v "$PWD/artifacts:/artifacts" node:24-alpine node -e "require('/artifacts/${addon}')"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binding-${{ matrix.platform }}
+          path: ${{ env.PACKAGE_DIR }}/artifacts/*.node
+          if-no-files-found: error
+
+  publish:
+    name: Publish to npm
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_DIR: ${{ needs.check.outputs.package-dir }}
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the toolchain from rust-toolchain.toml
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@${{ env.WASM_BINDGEN_VERSION }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Build the JavaScript, the addon loader, and the WebAssembly module
+        run: pnpm --filter "./${PACKAGE_DIR}" run build
+      - name: Test before publishing
+        run: pnpm --filter "./${PACKAGE_DIR}" run test
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: binding-*
+          merge-multiple: true
+          path: ${{ env.PACKAGE_DIR }}/artifacts
+      - name: Publish the platform packages, then the main package
+        working-directory: ${{ env.PACKAGE_DIR }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |
+          pnpm exec napi create-npm-dirs
+          pnpm exec napi artifacts --output-dir artifacts --npm-dir npm
+          pnpm exec napi pre-publish --npm-dir npm
+          npm publish

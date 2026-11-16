@@ -7,7 +7,17 @@ Sorhus: get the visual width of a string, the number of terminal columns require
   [Compatibility](#compatibility)).
 - Node.js native addon (NAPI-RS) and browser build (WebAssembly).
 - Additional batch API, `stringWidthMany`.
-- Status: `BENCHMARKED`. Not published to npm yet (see [Limitations](#limitations)).
+- Prebuilt for Linux (glibc and musl), macOS, and Windows, on x64 and arm64: no Rust toolchain
+  needed.
+
+## Installation
+
+```sh
+npm install @rust-js-replacements/string-width
+```
+
+Requires Node.js 22.12 or later. npm installs only the binary for your platform (one optional
+dependency per platform, such as `@rust-js-replacements/string-width-linux-x64-gnu`).
 
 ## Usage
 
@@ -162,11 +172,11 @@ remains a reasonable choice.
 
 ## Limitations
 
-- Not published to npm. Publishing needs the NAPI-RS multi-platform pipeline (one optional
-  dependency per target listed in `package.json`); only `linux-x64-gnu` has been built and tested
-  locally. The CI workflow builds and tests macOS and Windows but has not run yet.
-- The browser build has been tested in Node.js through the browser entry point, not in a browser.
-- The package name and npm scope are placeholders until release.
+- The full test suite runs on Linux, macOS, and Windows (x64) in CI. The arm64 binaries and
+  `darwin-x64` are cross-compiled; the release workflow only checks that the x64 Linux (glibc and
+  musl), macOS arm64, and Windows x64 binaries load.
+- The browser build has been tested in Node.js and in headless Chromium through the website
+  playground, not across browsers.
 
 ## Development
 

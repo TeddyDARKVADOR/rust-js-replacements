@@ -1,7 +1,6 @@
 {
   "name": "@rust-js-replacements/string-width",
   "version": "0.1.0",
-  "private": true,
   "description": "Rust-powered alternative to string-width: get the visual width of a string in terminal columns.",
   "license": "MIT",
   "repository": {
@@ -30,12 +29,15 @@
   },
   "files": [
     "dist",
-    "native/*.node",
     "native/binding.cjs",
     "native/binding.d.cts",
     "wasm"
   ],
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "pnpm run build:native && pnpm run build:wasm && pnpm run build:ts",
     "build:native": "napi build --platform --release --manifest-path rust/node/Cargo.toml --package-json-path package.json --output-dir native --js binding.cjs --dts binding.d.cts",

@@ -34,28 +34,20 @@ performance), and a playground that runs the library in the browser next to the 
 
 ## Installation
 
-No package has been published to npm yet. Until then, build from source:
-
-```sh
-git clone https://github.com/TeddyDARKVADOR/rust-js-replacements.git
-cd rust-js-replacements
-pnpm install
-pnpm run build
-```
-
-Then depend on the package directory from your project (for example,
-`pnpm add ../rust-js-replacements/packages/string-width`).
-
-Once released, installation will be:
+Each package is published on npm with prebuilt binaries for Linux (glibc and musl), macOS, and
+Windows, on x64 and arm64. No Rust toolchain is needed:
 
 ```sh
 npm install @rust-js-replacements/string-width
 ```
 
+To build from source instead, see [DEVELOPMENT.md](docs/DEVELOPMENT.md). Releases are described in
+[RELEASING.md](docs/RELEASING.md).
+
 ## Requirements
 
 - Node.js 22.12 or later.
-- To build from source: Rust 1.99.0 (pinned in `rust-toolchain.toml`), pnpm 11, and for browser
+- Only to build from source: Rust 1.99.0 (pinned in `rust-toolchain.toml`), pnpm 11, and for browser
   builds the `wasm32-unknown-unknown` target and `wasm-bindgen-cli` 0.2.130. See
   [DEVELOPMENT.md](docs/DEVELOPMENT.md).
 

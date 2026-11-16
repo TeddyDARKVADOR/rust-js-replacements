@@ -29,8 +29,6 @@ export type CatalogEntry = {
   readonly id: string;
   readonly packageName: string;
   readonly status: Status;
-  /** Whether the package is available on npm. */
-  readonly published: boolean;
   readonly targets: readonly Target[];
   readonly original: {
     readonly name: string;
@@ -102,9 +100,6 @@ export function validateCatalogEntry(value: unknown, source: string): string[] {
 
   if (!STATUSES.includes(value.status as Status)) {
     problems.push(`${source}: "status" must be one of ${STATUSES.join(', ')}`);
-  }
-  if (typeof value.published !== 'boolean') {
-    problems.push(`${source}: "published" must be a boolean`);
   }
   if (
     !Array.isArray(value.targets) ||

@@ -7,6 +7,7 @@ import {
   type Library,
   nativeSpeedRange,
 } from './catalog.ts';
+import { latestVersion } from './npm.ts';
 
 /** Overridden at build time by the deployment workflow, so that forks link to themselves. */
 const REPOSITORY_URL: string =
@@ -56,12 +57,13 @@ function installCommand(library: Library): string {
 }
 
 function badges(library: Library): string {
-  const { status, targets, published } = library.entry;
+  const { status, targets, packageName } = library.entry;
   const targetLabels = targets.map((target) => (target === 'node' ? 'Node.js' : 'Browser'));
   return [
     `<span class="badge badge-status">${escapeHtml(status)}</span>`,
     ...targetLabels.map((label) => `<span class="badge">${label}</span>`),
-    published ? '' : '<span class="badge badge-warning">Not on npm yet</span>',
+    // Filled in by hydrateNpm() once the registry answers.
+    `<span class="badge" data-npm-badge="${escapeHtml(packageName)}" hidden></span>`,
   ].join('');
 }
 
@@ -146,22 +148,66 @@ function renderPerformance(library: Library, rows: HighlightRow[]): string {
 }
 
 function renderInstall(library: Library): string {
+  const { packageName } = library.entry;
   const command = installCommand(library);
-  const notice = library.entry.published
-    ? ''
-    : `<p class="notice">Not published on npm yet. Until then, build it from source:</p>
-       <pre><code>git clone ${escapeHtml(`${REPOSITORY_URL}.git`)} rust-js-replacements
-cd rust-js-replacements
-pnpm install
-pnpm run build
-pnpm add ./rust-js-replacements/packages/${escapeHtml(library.entry.id)}   # from your project</code></pre>
-       <p class="muted">Once released:</p>`;
   return `
-    ${notice}
     <div class="install">
       <code>${escapeHtml(command)}</code>
       <button type="button" class="copy" data-copy="${escapeHtml(command)}">Copy</button>
+    </div>
+    <p class="muted">Or <code>pnpm add ${escapeHtml(packageName)}</code>, <code>yarn add ${escapeHtml(packageName)}</code>. Prebuilt for Linux, macOS, and Windows (x64 and arm64): no Rust toolchain needed.</p>
+    <div data-npm-status="${escapeHtml(packageName)}" data-id="${escapeHtml(library.entry.id)}">
+      <p class="muted">Checking npm...</p>
     </div>`;
+}
+
+function renderNpmStatus(
+  packageName: string,
+  id: string,
+  version: string | null | undefined,
+): string {
+  if (typeof version === 'string') {
+    const url = `https://www.npmjs.com/package/${packageName}`;
+    return `<p class="muted">Latest version on npm: <a href="${escapeHtml(url)}">${escapeHtml(version)}</a>.</p>`;
+  }
+  if (version === undefined) {
+    return '<p class="muted">Could not reach the npm registry to check the latest version.</p>';
+  }
+
+  return `
+    <p class="notice">Not published on npm yet. Until then, build it from source:</p>
+    <pre><code>git clone ${escapeHtml(`${REPOSITORY_URL}.git`)}
+cd rust-js-replacements
+pnpm install
+pnpm run build
+pnpm add ./rust-js-replacements/packages/${escapeHtml(id)}   # from your project</code></pre>`;
+}
+
+/** Replaces the npm placeholders of the current page with the registry's answer. */
+function hydrateNpm(): void {
+  for (const badge of document.querySelectorAll<HTMLElement>('[data-npm-badge]')) {
+    const packageName = badge.dataset.npmBadge ?? '';
+    void latestVersion(packageName).then((version) => {
+      if (version === undefined) {
+        return;
+      }
+      badge.hidden = false;
+      if (version === null) {
+        badge.className = 'badge badge-warning';
+        badge.textContent = 'Not on npm yet';
+      } else {
+        badge.className = 'badge badge-npm';
+        badge.textContent = `npm ${version}`;
+      }
+    });
+  }
+
+  for (const status of document.querySelectorAll<HTMLElement>('[data-npm-status]')) {
+    const packageName = status.dataset.npmStatus ?? '';
+    void latestVersion(packageName).then((version) => {
+      status.innerHTML = renderNpmStatus(packageName, status.dataset.id ?? '', version);
+    });
+  }
 }
 
 function renderLibrary(library: Library): string {
@@ -242,6 +288,8 @@ function route(): void {
     app.innerHTML = renderLibrary(library);
     void mountPlayground(library.entry.id);
   }
+
+  hydrateNpm();
 
   window.scrollTo(0, 0);
 }

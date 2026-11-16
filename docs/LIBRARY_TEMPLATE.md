@@ -43,7 +43,10 @@ packages/<package>/
 
 ### package.json checklist
 
-- `name`: `@rust-js-replacements/<package>`; `private: true` until the package is released.
+- `name`: `@rust-js-replacements/<package>`, with `repository` (including `directory`),
+  `homepage`, `bugs`, and `publishConfig: { "access": "public", "provenance": true }`.
+- `files`: only what the main package ships (`dist`, the NAPI-RS loader, the WebAssembly module);
+  binaries go to the per-platform packages. A `LICENSE` file in the package directory.
 - `type: "module"`, `engines` matching the original, `sideEffects: false`.
 - `exports` with `types`, a `browser` condition when there is a WebAssembly build, and `default`.
 - Scripts: `build`, `build:native`, `build:ts`, `typecheck`, `test`, `bench`, plus `build:wasm` and
@@ -93,6 +96,8 @@ the package README, including slower workloads.
   - Performance figures are never typed into `catalog.json`: the site reads them from the committed
     files in `benchmarks/results/`.
 - Make sure CI passes (`pnpm run lint`, `pnpm run test`, `cargo test --workspace`).
+- Release it by pushing a `<package>-v<version>` tag ([RELEASING.md](RELEASING.md)). The release
+  workflow needs no change for a new package.
 - Set the development status honestly:
 
 | Status | Criteria |

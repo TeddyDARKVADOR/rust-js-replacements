@@ -2,7 +2,6 @@
   "id": "string-width",
   "packageName": "@rust-js-replacements/string-width",
   "status": "BENCHMARKED",
-  "published": false,
   "targets": ["node", "browser"],
   "original": {
     "name": "string-width",

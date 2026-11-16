@@ -70,6 +70,10 @@ pnpm run generate:tables  # needs network access to unicode.org
 
 Regenerate them with the Node.js version the package targets, then run the compatibility tests.
 
+## Releasing
+
+See [RELEASING.md](RELEASING.md).
+
 ## Adding a package
 
 Follow [RESEARCH_POLICY.md](RESEARCH_POLICY.md) first, then [LIBRARY_TEMPLATE.md](LIBRARY_TEMPLATE.md).
