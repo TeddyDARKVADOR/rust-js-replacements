@@ -1,0 +1,71 @@
+{
+  "name": "@rust-js-replacements/string-width",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rust-powered alternative to string-width: get the visual width of a string in terminal columns.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeddyDARKVADOR/rust-js-replacements.git",
+    "directory": "packages/string-width"
+  },
+  "homepage": "https://teddydarkvador.github.io/rust-js-replacements/#/string-width",
+  "bugs": {
+    "url": "https://github.com/TeddyDARKVADOR/rust-js-replacements/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/browser.js",
+      "default": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "default": "./dist/browser.js"
+    }
+  },
+  "files": [
+    "dist",
+    "native/*.node",
+    "native/binding.cjs",
+    "native/binding.d.cts",
+    "wasm"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "pnpm run build:native && pnpm run build:wasm && pnpm run build:ts",
+    "build:native": "napi build --platform --release --manifest-path rust/node/Cargo.toml --package-json-path package.json --output-dir native --js binding.cjs --dts binding.d.cts",
+    "build:wasm": "cargo build --package string-width-wasm --target wasm32-unknown-unknown --profile wasm-release && wasm-bindgen ../../target/wasm32-unknown-unknown/wasm-release/string_width_wasm.wasm --target web --out-dir wasm",
+    "build:ts": "tsc --project tsconfig.build.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "generate:tables": "node scripts/generate-tables.ts",
+    "test": "node --test --test-reporter=spec \"tests/*.test.ts\" \"tests/upstream/*.test.js\"",
+    "test:wasm": "node --test --test-reporter=spec \"tests/wasm/*.test.ts\"",
+    "bench": "node --expose-gc benchmarks/run.ts"
+  },
+  "napi": {
+    "binaryName": "string-width",
+    "targets": [
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-linux-musl",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-unknown-linux-musl",
+      "x86_64-apple-darwin",
+      "aarch64-apple-darwin",
+      "x86_64-pc-windows-msvc",
+      "aarch64-pc-windows-msvc"
+    ]
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "3.10.12",
+    "@types/node": "22.20.5",
+    "get-east-asian-width": "1.7.0",
+    "string-width": "9.0.0",
+    "tinybench": "6.2.3",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,7 @@
+# Honored by rustup (CI and most contributors). Pinned so that formatting, lints, and generated
+# code are identical everywhere. The wasm32 target is needed for browser builds.
+[toolchain]
+channel = "1.99.0"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]
+profile = "minimal"

@@ -1,0 +1,503 @@
+{
+  "environment": {
+    "Date": "2026-11-16T10:42:38.393Z",
+    "Node.js": "v24.21.0 (V8 13.6.233.17-node.53, ICU 78.3, Unicode 17.0)",
+    "Platform": "linux x64 (7.2.14-200.fc44.x86_64)",
+    "CPU": "AMD Ryzen 5 PRO 7640HS w/ Radeon 760M Graphics (12 logical cores)",
+    "Measuring time per task": "1000 ms",
+    "Original package": "string-width 9.0.0"
+  },
+  "throughput": [
+    {
+      "workload": "boundary-overhead",
+      "description": "One-character non-ASCII string (U+00E9), bindings called directly",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 667483.8803443181,
+          "meanMicroseconds": 2.3003443588719654,
+          "medianMicroseconds": 1.3830000000325526,
+          "p99Microseconds": 5.521000000044296,
+          "relativeMarginOfError": 24.447884579335707,
+          "samples": 434718,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native binding, direct call",
+          "opsPerSecond": 5052979.640661012,
+          "meanMicroseconds": 0.20465071776114072,
+          "medianMicroseconds": 0.19100000008620555,
+          "p99Microseconds": 0.4109999999855063,
+          "relativeMarginOfError": 0.13166219833966106,
+          "samples": 4886375,
+          "relativeToOriginal": 7.5701897670614295
+        },
+        {
+          "implementation": "WebAssembly binding, direct call",
+          "opsPerSecond": 4605800.807635683,
+          "meanMicroseconds": 0.22751349564456966,
+          "medianMicroseconds": 0.21099999958096305,
+          "p99Microseconds": 0.44100000013713725,
+          "relativeMarginOfError": 0.2687620598985829,
+          "samples": 4395344,
+          "relativeToOriginal": 6.900242752319058
+        }
+      ]
+    },
+    {
+      "workload": "ascii-short",
+      "description": "Short printable ASCII (answered in JavaScript, never reaches Rust)",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 18080084.985416654,
+          "meanMicroseconds": 0.05775150998561024,
+          "medianMicroseconds": 0.050999999075429514,
+          "p99Microseconds": 0.11000000085914508,
+          "relativeMarginOfError": 0.1768210369476468,
+          "samples": 17315565,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 22055239.678704068,
+          "meanMicroseconds": 0.0483177647702964,
+          "medianMicroseconds": 0.04099999932805076,
+          "p99Microseconds": 0.11000000085914508,
+          "relativeMarginOfError": 0.20044344991326685,
+          "samples": 20696322,
+          "relativeToOriginal": 1.21986371726094
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 22884989.358238354,
+          "meanMicroseconds": 0.045434065153497384,
+          "medianMicroseconds": 0.040000002627493814,
+          "p99Microseconds": 0.08999999772640876,
+          "relativeMarginOfError": 0.12214788321616726,
+          "samples": 22009917,
+          "relativeToOriginal": 1.265756736027365
+        }
+      ]
+    },
+    {
+      "workload": "ansi-short",
+      "description": "Short ASCII with ANSI color codes",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 5390919.416387913,
+          "meanMicroseconds": 0.18818752659365579,
+          "medianMicroseconds": 0.1809999994293321,
+          "p99Microseconds": 0.27100000079371966,
+          "relativeMarginOfError": 0.04647070060678802,
+          "samples": 5313849,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 3520011.362317398,
+          "meanMicroseconds": 0.29091063487723784,
+          "medianMicroseconds": 0.28000000020256266,
+          "p99Microseconds": 0.5510000009962823,
+          "relativeMarginOfError": 0.05064795780854509,
+          "samples": 3437482,
+          "relativeToOriginal": 0.6529519531708967
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 3593913.6965446034,
+          "meanMicroseconds": 0.2853910796457891,
+          "medianMicroseconds": 0.27099999715574086,
+          "p99Microseconds": 0.5210000017541461,
+          "relativeMarginOfError": 0.06217866045242844,
+          "samples": 3503964,
+          "relativeToOriginal": 0.6666606229763753
+        }
+      ]
+    },
+    {
+      "workload": "latin-accents",
+      "description": "Short Latin text with one accented letter",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 486213.7041356145,
+          "meanMicroseconds": 3.499433110179062,
+          "medianMicroseconds": 1.9740000061574392,
+          "p99Microseconds": 4.178000002866611,
+          "relativeMarginOfError": 28.397341173774954,
+          "samples": 285761,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 2109978.482801031,
+          "meanMicroseconds": 0.48946563145032573,
+          "medianMicroseconds": 0.46100000326987356,
+          "p99Microseconds": 0.901999999769032,
+          "relativeMarginOfError": 0.09639393710683351,
+          "samples": 2043045,
+          "relativeToOriginal": 4.339611296131868
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 1487279.307817098,
+          "meanMicroseconds": 0.6871025953986748,
+          "medianMicroseconds": 0.6510000021080486,
+          "p99Microseconds": 1.1819999999715947,
+          "relativeMarginOfError": 0.13405483448933692,
+          "samples": 1455387,
+          "relativeToOriginal": 3.0589004282821834
+        }
+      ]
+    },
+    {
+      "workload": "cjk-short",
+      "description": "Short Chinese sentence",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 450713.09221373184,
+          "meanMicroseconds": 2.980246305673703,
+          "medianMicroseconds": 2.1740000011050142,
+          "p99Microseconds": 3.92699999792967,
+          "relativeMarginOfError": 21.999675731249376,
+          "samples": 341876,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 1817203.8876174504,
+          "meanMicroseconds": 0.558035434131402,
+          "medianMicroseconds": 0.5410000012489036,
+          "p99Microseconds": 0.8820000002742745,
+          "relativeMarginOfError": 0.05609164550490128,
+          "samples": 1792001,
+          "relativeToOriginal": 4.031841805819383
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 1238336.877003929,
+          "meanMicroseconds": 0.8270490221726016,
+          "medianMicroseconds": 0.7909999985713512,
+          "p99Microseconds": 1.512999995611608,
+          "relativeMarginOfError": 0.17548520896668077,
+          "samples": 1209167,
+          "relativeToOriginal": 2.7475058932095533
+        }
+      ]
+    },
+    {
+      "workload": "emoji-short",
+      "description": "Short text with emoji, a ZWJ sequence, a flag, and a keycap",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 144480.31453746918,
+          "meanMicroseconds": 8.11300051111235,
+          "medianMicroseconds": 6.632999997236766,
+          "p99Microseconds": 13.745999996899627,
+          "relativeMarginOfError": 13.494662568498805,
+          "samples": 123259,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 958260.5627010572,
+          "meanMicroseconds": 1.0744489701456965,
+          "medianMicroseconds": 1.021999996737577,
+          "p99Microseconds": 1.9440000032773241,
+          "relativeMarginOfError": 0.19481548557305528,
+          "samples": 930710,
+          "relativeToOriginal": 6.632464538638198
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 786842.5306012793,
+          "meanMicroseconds": 1.291154521424869,
+          "medianMicroseconds": 1.2419999984558672,
+          "p99Microseconds": 2.2440000029746443,
+          "relativeMarginOfError": 0.05513023874460159,
+          "samples": 774501,
+          "relativeToOriginal": 5.446018948119202
+        }
+      ]
+    },
+    {
+      "workload": "table-row",
+      "description": "Colored table row mixing ASCII, CJK, box drawing, and emoji",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 215388.6569797588,
+          "meanMicroseconds": 5.877410848506011,
+          "medianMicroseconds": 4.488000005949289,
+          "p99Microseconds": 9.694219996163042,
+          "relativeMarginOfError": 12.607103824133295,
+          "samples": 170143,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 914103.3942725917,
+          "meanMicroseconds": 1.1070871830435938,
+          "medianMicroseconds": 1.0719999991124496,
+          "p99Microseconds": 1.7430000007152557,
+          "relativeMarginOfError": 0.054850077714045924,
+          "samples": 903272,
+          "relativeToOriginal": 4.243971837191476
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 591003.2571795383,
+          "meanMicroseconds": 1.7084485424381801,
+          "medianMicroseconds": 1.6729999988456257,
+          "p99Microseconds": 2.4850000026344787,
+          "relativeMarginOfError": 0.10909129492872502,
+          "samples": 585327,
+          "relativeToOriginal": 2.7438922061484323
+        }
+      ]
+    },
+    {
+      "workload": "mixed-10kb",
+      "description": "About 10,000 UTF-16 code units of mixed fixture text",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 935.9788256677541,
+          "meanMicroseconds": 1074.3430590762434,
+          "medianMicroseconds": 1049.670000000333,
+          "p99Microseconds": 1540.0348000039232,
+          "relativeMarginOfError": 0.5778789382626621,
+          "samples": 931,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 4840.040275864375,
+          "meanMicroseconds": 207.26892808286956,
+          "medianMicroseconds": 204.59200000186684,
+          "p99Microseconds": 230.59823999996297,
+          "relativeMarginOfError": 0.3592525781213857,
+          "samples": 4825,
+          "relativeToOriginal": 5.171100182112935
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 3159.4913309845824,
+          "meanMicroseconds": 317.89815988551413,
+          "medianMicroseconds": 312.1629999986908,
+          "p99Microseconds": 400.07174999809695,
+          "relativeMarginOfError": 0.31597138374416267,
+          "samples": 3146,
+          "relativeToOriginal": 3.375601289623738
+        }
+      ]
+    },
+    {
+      "workload": "ascii-ansi-10kb",
+      "description": "About 10,000 UTF-16 code units of colored ASCII log lines",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 2097.8192795004884,
+          "meanMicroseconds": 490.3168877450761,
+          "medianMicroseconds": 456.0215000019525,
+          "p99Microseconds": 985.1431199976649,
+          "relativeMarginOfError": 0.9602761692407629,
+          "samples": 2040,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 8462.130037927425,
+          "meanMicroseconds": 121.70479299012732,
+          "medianMicroseconds": 111.54800000076648,
+          "p99Microseconds": 249.01187999465049,
+          "relativeMarginOfError": 0.4790436758817079,
+          "samples": 8217,
+          "relativeToOriginal": 4.033774558475
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 4141.251564739176,
+          "meanMicroseconds": 249.50663323360556,
+          "medianMicroseconds": 228.64700000354787,
+          "p99Microseconds": 529.8278000023129,
+          "relativeMarginOfError": 0.7678291629397354,
+          "samples": 4008,
+          "relativeToOriginal": 1.9740745092805367
+        }
+      ]
+    },
+    {
+      "workload": "combining-marks",
+      "description": "Decomposed Vietnamese and Devanagari text (many multi-code-point clusters)",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript)",
+          "opsPerSecond": 187068.32530633232,
+          "meanMicroseconds": 6.18051908849578,
+          "medianMicroseconds": 5.18999999621883,
+          "p99Microseconds": 11.030999994691228,
+          "relativeMarginOfError": 12.524429205229271,
+          "samples": 161799,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon",
+          "opsPerSecond": 626028.6863989461,
+          "meanMicroseconds": 1.618339213295165,
+          "medianMicroseconds": 1.5530000018770806,
+          "p99Microseconds": 2.5349999996251427,
+          "relativeMarginOfError": 0.05877602953751475,
+          "samples": 617918,
+          "relativeToOriginal": 3.3465242465489418
+        },
+        {
+          "implementation": "WebAssembly",
+          "opsPerSecond": 566101.6159793456,
+          "meanMicroseconds": 1.787517235215026,
+          "medianMicroseconds": 1.7430000007152557,
+          "p99Microseconds": 2.7049999989685602,
+          "relativeMarginOfError": 0.06538106232106498,
+          "samples": 559436,
+          "relativeToOriginal": 3.026175677001065
+        }
+      ]
+    },
+    {
+      "workload": "batch-fixtures-1000",
+      "description": "1,000 strings cycling through the curated fixtures (4% printable ASCII)",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript), loop",
+          "opsPerSecond": 410.3756160443769,
+          "meanMicroseconds": 3251.99674675326,
+          "medianMicroseconds": 2348.6439999978757,
+          "p99Microseconds": 6463.458949996715,
+          "relativeMarginOfError": 30.987526787195357,
+          "samples": 308,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon, stringWidth loop",
+          "opsPerSecond": 2750.2378813929217,
+          "meanMicroseconds": 365.26549013907817,
+          "medianMicroseconds": 359.010500003933,
+          "p99Microseconds": 491.12272999671524,
+          "relativeMarginOfError": 0.337855945317382,
+          "samples": 2738,
+          "relativeToOriginal": 6.70175754569082
+        },
+        {
+          "implementation": "native addon, stringWidthMany",
+          "opsPerSecond": 3079.917955854223,
+          "meanMicroseconds": 361.1423651137654,
+          "medianMicroseconds": 320.638000004692,
+          "p99Microseconds": 401.4803599950395,
+          "relativeMarginOfError": 16.332936050094595,
+          "samples": 2769,
+          "relativeToOriginal": 7.505119299098825
+        },
+        {
+          "implementation": "WebAssembly, stringWidthMany",
+          "opsPerSecond": 2031.4285744976855,
+          "meanMicroseconds": 497.02180268383563,
+          "medianMicroseconds": 477.5359999985085,
+          "p99Microseconds": 790.9639399938166,
+          "relativeMarginOfError": 0.5228323598548116,
+          "samples": 2012,
+          "relativeToOriginal": 4.950168808952851
+        }
+      ]
+    },
+    {
+      "workload": "batch-cli-table-1000",
+      "description": "1,000 table cells: 80% plain ASCII, 15% colored ASCII, 5% CJK or emoji",
+      "tasks": [
+        {
+          "implementation": "original (JavaScript), loop",
+          "opsPerSecond": 10388.52031887681,
+          "meanMicroseconds": 128.97836681051697,
+          "medianMicroseconds": 93.3039999945322,
+          "p99Microseconds": 194.7082499973476,
+          "relativeMarginOfError": 25.898545121886418,
+          "samples": 7876,
+          "relativeToOriginal": 1
+        },
+        {
+          "implementation": "native addon, stringWidth loop",
+          "opsPerSecond": 16937.52648510444,
+          "meanMicroseconds": 59.10504054371585,
+          "medianMicroseconds": 58.52000000595581,
+          "p99Microseconds": 65.19990999862786,
+          "relativeMarginOfError": 0.058864833841468046,
+          "samples": 16920,
+          "relativeToOriginal": 1.63040798546907
+        },
+        {
+          "implementation": "native addon, stringWidthMany",
+          "opsPerSecond": 17314.350998317255,
+          "meanMicroseconds": 62.592201539768205,
+          "medianMicroseconds": 57.4579999956768,
+          "p99Microseconds": 87.0230000000447,
+          "relativeMarginOfError": 13.187790889039242,
+          "samples": 15977,
+          "relativeToOriginal": 1.666681150621194
+        },
+        {
+          "implementation": "WebAssembly, stringWidthMany",
+          "opsPerSecond": 14076.427378199704,
+          "meanMicroseconds": 71.47683360734264,
+          "medianMicroseconds": 70.75299999269191,
+          "p99Microseconds": 89.49400000419703,
+          "relativeMarginOfError": 0.20102656400892968,
+          "samples": 13991,
+          "relativeToOriginal": 1.3549983006359103
+        }
+      ]
+    }
+  ],
+  "startup": [
+    {
+      "implementation": "empty Node.js process (baseline)",
+      "medianMilliseconds": 37.445842,
+      "medianRssMegabytes": 43.36328125
+    },
+    {
+      "implementation": "original (JavaScript)",
+      "medianMilliseconds": 62.511643,
+      "medianRssMegabytes": 50.2734375
+    },
+    {
+      "implementation": "native addon",
+      "medianMilliseconds": 40.949942,
+      "medianRssMegabytes": 47.26953125
+    },
+    {
+      "implementation": "WebAssembly",
+      "medianMilliseconds": 41.962733,
+      "medianRssMegabytes": 49.4609375
+    }
+  ],
+  "sizes": [
+    {
+      "artifact": "original: string-width and its dependencies (JavaScript)",
+      "bytes": 23964,
+      "gzipBytes": 8656
+    },
+    {
+      "artifact": "native addon (string-width.linux-x64-gnu.node)",
+      "bytes": 630128,
+      "gzipBytes": 253820
+    },
+    {
+      "artifact": "WebAssembly module and wasm-bindgen glue",
+      "bytes": 163594,
+      "gzipBytes": 55164
+    }
+  ]
+}

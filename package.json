@@ -1,0 +1,28 @@
+{
+  "name": "rust-js-replacements",
+  "private": true,
+  "description": "Rust-powered replacements for JavaScript and TypeScript libraries.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeddyDARKVADOR/rust-js-replacements.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@11.28.9",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
+    "bench": "pnpm --recursive run bench",
+    "lint": "pnpm run lint:js && pnpm run lint:rust",
+    "lint:js": "biome check .",
+    "lint:rust": "cargo fmt --all --check && cargo clippy --workspace --all-targets -- -D warnings",
+    "format": "biome format --write . && cargo fmt --all",
+    "test:rust": "cargo test --workspace"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4"
+  }
+}

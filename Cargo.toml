@@ -1,0 +1,28 @@
+[workspace]
+resolver = "3"
+members = ["packages/*/rust/*"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+publish = false
+
+[workspace.lints.rust]
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+
+# WebAssembly builds keep the `target_features` custom section that wasm-bindgen reads.
+[profile.wasm-release]
+inherits = "release"
+strip = "debuginfo"

@@ -1,0 +1,19 @@
+# Rust
+/target/
+
+# Node.js
+node_modules/
+dist/
+
+# Native and WebAssembly build outputs
+*.node
+packages/*/native/
+packages/*/wasm/
+
+# Benchmark scratch output (committed results live in benchmarks/results/)
+*.cpuprofile
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store

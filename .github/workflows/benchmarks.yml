@@ -1,0 +1,45 @@
+name: Benchmarks
+
+# Benchmarks run separately from CI: shared runners are noisy, and performance must never block
+# ordinary development. Results are uploaded as artifacts; only results measured on a documented
+# machine are committed (see docs/BENCHMARK_RULES.md).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  WASM_BINDGEN_VERSION: 0.2.130
+
+jobs:
+  benchmarks:
+    name: Benchmarks on Node.js ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the toolchain from rust-toolchain.toml
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@${{ env.WASM_BINDGEN_VERSION }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter "./packages/*" run build
+      - run: pnpm --filter "./packages/*" run bench
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-node${{ matrix.node }}
+          path: packages/*/benchmarks/results/

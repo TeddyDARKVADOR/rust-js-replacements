@@ -1,0 +1,50 @@
+{
+  "id": "string-width",
+  "packageName": "@rust-js-replacements/string-width",
+  "status": "BENCHMARKED",
+  "published": false,
+  "targets": ["node", "browser"],
+  "original": {
+    "name": "string-width",
+    "version": "9.0.0",
+    "npmUrl": "https://www.npmjs.com/package/string-width",
+    "repositoryUrl": "https://github.com/sindresorhus/string-width"
+  },
+  "summary": "Measure the visual width of a string in terminal columns, with a Rust core.",
+  "description": [
+    "Returns how many columns a string occupies in a terminal. CJK characters and most emoji take two columns, combining marks and zero-width characters take none, and ANSI escape codes are ignored. CLI tools use it to align tables, progress bars, and prompts.",
+    "A drop-in alternative to string-width 9.0.0 with the same API and results, plus a batch API. It runs as a native addon in Node.js and as WebAssembly in browsers."
+  ],
+  "compatibility": [
+    "Same API, options, defaults, and results as string-width 9.0.0.",
+    "The original's own test suite (466 tests) passes unchanged.",
+    "Identical results on every Unicode code point, every RGI emoji sequence, and 200,000 random strings, for every option combination."
+  ],
+  "differences": [
+    "Uses Unicode 17.0 tables, while the original follows the Unicode version of the runtime (Node.js 22.23 and 24.21 both use Unicode 17.0).",
+    "The browser build must be initialized once with init() before use.",
+    "Short ANSI-colored ASCII strings are slower than with the original: crossing into Rust costs more than the work."
+  ],
+  "usage": [
+    "import stringWidth, { stringWidthMany } from '@rust-js-replacements/string-width';",
+    "",
+    "stringWidth('hello'); // 5",
+    "stringWidth('\\x1B[1mbold\\x1B[22m'); // 4",
+    "stringWidth('\\u{53E4}'); // 2",
+    "stringWidthMany(['hello', '\\u{53E4}']); // Uint32Array [5, 2]"
+  ],
+  "benchmarkHighlights": [
+    { "workload": "emoji-short", "label": "Short text with emoji" },
+    { "workload": "cjk-short", "label": "Short Chinese sentence" },
+    { "workload": "table-row", "label": "Colored table row" },
+    { "workload": "mixed-10kb", "label": "10,000 characters of mixed text" },
+    { "workload": "ascii-ansi-10kb", "label": "10,000 characters of colored logs" },
+    {
+      "workload": "batch-cli-table-1000",
+      "label": "1,000 CLI table cells (80% plain ASCII), batch API",
+      "nativeImplementation": "native addon, stringWidthMany",
+      "webAssemblyImplementation": "WebAssembly, stringWidthMany"
+    },
+    { "workload": "ansi-short", "label": "Short ASCII with ANSI colors" }
+  ]
+}

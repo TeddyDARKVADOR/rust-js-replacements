@@ -1,0 +1,23 @@
+{
+  "name": "website",
+  "private": true,
+  "description": "Catalog website: one page per library with installation, results, and a live playground.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "check:catalog": "node scripts/check-catalog.ts",
+    "dev": "vite",
+    "build": "node scripts/check-catalog.ts && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@rust-js-replacements/string-width": "workspace:*",
+    "string-width": "9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}
