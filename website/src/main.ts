@@ -52,8 +52,9 @@ function repositoryLink(path: string, label: string): string {
     : `<a href="${escapeHtml(`${REPOSITORY_URL}/${path}`)}">${escapeHtml(label)}</a>`;
 }
 
-function installCommand(library: Library): string {
-  return `npm install ${library.entry.packageName}`;
+function installCommands(library: Library): string[] {
+  const { packageName } = library.entry;
+  return [`npm install ${packageName}`, `pnpm add ${packageName}`, `yarn add ${packageName}`];
 }
 
 function badges(library: Library): string {
@@ -149,13 +150,19 @@ function renderPerformance(library: Library, rows: HighlightRow[]): string {
 
 function renderInstall(library: Library): string {
   const { packageName } = library.entry;
-  const command = installCommand(library);
+  const commands = installCommands(library)
+    .map(
+      (command) => `
+      <div class="install">
+        <code>${escapeHtml(command)}</code>
+        <button type="button" class="copy" data-copy="${escapeHtml(command)}">Copy</button>
+      </div>`,
+    )
+    .join('');
   return `
-    <div class="install">
-      <code>${escapeHtml(command)}</code>
-      <button type="button" class="copy" data-copy="${escapeHtml(command)}">Copy</button>
+    <div class="install-list">${commands}
     </div>
-    <p class="muted">Or <code>pnpm add ${escapeHtml(packageName)}</code>, <code>yarn add ${escapeHtml(packageName)}</code>. Prebuilt for Linux, macOS, and Windows (x64 and arm64): no Rust toolchain needed.</p>
+    <p class="muted">Prebuilt for Linux, macOS, and Windows (x64 and arm64): no Rust toolchain needed.</p>
     <div data-npm-status="${escapeHtml(packageName)}" data-id="${escapeHtml(library.entry.id)}">
       <p class="muted">Checking npm...</p>
     </div>`;

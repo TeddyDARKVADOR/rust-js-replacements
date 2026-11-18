@@ -273,6 +273,11 @@ main,
   font-size: 1.15rem;
 }
 
+.install-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
 .install {
   display: flex;
   align-items: center;
