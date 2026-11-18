@@ -1,7 +1,7 @@
 {
   "id": "wrap-ansi",
   "packageName": "@rust-js-replacements/wrap-ansi",
-  "status": "BENCHMARKED",
+  "status": "RELEASED",
   "targets": ["node", "browser"],
   "original": {
     "name": "wrap-ansi",
@@ -12,7 +12,7 @@
   "summary": "Wordwrap a string with ANSI escape codes, with a Rust core.",
   "description": [
     "Wraps text to a number of terminal columns without breaking colors, styles, or hyperlinks: every row closes the active styles and reopens them on the next row. CLI tools use it for help text, boxes, and prompts.",
-    "A drop-in alternative to wrap-ansi 10.0.2 with the same API and output. It runs as a native addon in Node.js and as WebAssembly in browsers. Not published on npm yet."
+    "A drop-in alternative to wrap-ansi 10.0.2 with the same API and output. It runs as a native addon in Node.js and as WebAssembly in browsers."
   ],
   "compatibility": [
     "Same API, options, defaults, and output as wrap-ansi 10.0.2.",

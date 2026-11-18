@@ -1,9 +1,14 @@
 # @rust-js-replacements/wrap-ansi
 
-> Status: `BENCHMARKED`. Not published on npm yet.
-
 Rust-powered alternative to [`wrap-ansi`](https://github.com/chalk/wrap-ansi) 10.0.2: wordwrap a
 string with ANSI escape codes, with the same API and the same output.
+
+```sh
+npm install @rust-js-replacements/wrap-ansi
+```
+
+Prebuilt for Linux (glibc and musl), macOS, and Windows, on x64 and arm64: no Rust toolchain
+needed.
 
 ```ts
 import wrapAnsi from '@rust-js-replacements/wrap-ansi';

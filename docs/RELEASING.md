@@ -55,8 +55,10 @@ package (and of each of its platform packages) therefore needs a temporary granu
    publishing otherwise; the workflow needs no change.
 3. Release as usual (tag and push, see below).
 4. After the release, configure trusted publishing on every new package (the main package and
-   each platform package, with **npm publish** ticked), then delete the `NPM_TOKEN` secret and the
-   token on npmjs.com, so that later releases go back to trusted publishing.
+   each platform package, with **npm publish** ticked). Deleting the `NPM_TOKEN` secret afterwards
+   is recommended: while it exists, every release authenticates with the token instead of trusted
+   publishing. It must be deleted before npm stops accepting such tokens (January 2027), or
+   releases will fail.
 
 npm stops accepting such tokens for direct publishing in January 2027. After that, create each new
 package by hand once (`npm publish` from your machine, with your 2FA code), then configure trusted
