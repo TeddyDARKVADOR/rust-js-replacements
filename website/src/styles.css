@@ -420,6 +420,133 @@ details summary {
   justify-self: start;
 }
 
+/* Terminal output of the wrap-ansi playground: dark in both color schemes, like a terminal. */
+.terminals {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.terminals figure {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.terminal {
+  margin: 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: #1b1a18;
+  color: #e6e1d9;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre;
+}
+
+.terminal-ruler {
+  color: #6f6a62;
+}
+
+.ansi-bold {
+  font-weight: 700;
+}
+
+.ansi-dim {
+  opacity: 0.65;
+}
+
+.ansi-italic {
+  font-style: italic;
+}
+
+.ansi-link {
+  text-decoration: underline;
+}
+
+.ansi-30,
+.ansi-90 {
+  color: #8a857d;
+}
+
+.ansi-31,
+.ansi-91 {
+  color: #f2777a;
+}
+
+.ansi-32,
+.ansi-92 {
+  color: #8fd48f;
+}
+
+.ansi-33,
+.ansi-93 {
+  color: #f0c674;
+}
+
+.ansi-34,
+.ansi-94 {
+  color: #7aa6da;
+}
+
+.ansi-35,
+.ansi-95 {
+  color: #c397d8;
+}
+
+.ansi-36,
+.ansi-96 {
+  color: #70c0b1;
+}
+
+.ansi-37,
+.ansi-97 {
+  color: #ffffff;
+}
+
+.ansi-bg-40,
+.ansi-bg-100 {
+  background: #3a3733;
+}
+
+.ansi-bg-41,
+.ansi-bg-101 {
+  background: #7a2e2e;
+}
+
+.ansi-bg-42,
+.ansi-bg-102 {
+  background: #2e5a2e;
+}
+
+.ansi-bg-43,
+.ansi-bg-103 {
+  background: #6b5a1e;
+}
+
+.ansi-bg-44,
+.ansi-bg-104 {
+  background: #2a4566;
+}
+
+.ansi-bg-45,
+.ansi-bg-105 {
+  background: #553a66;
+}
+
+.ansi-bg-46,
+.ansi-bg-106 {
+  background: #2a5a55;
+}
+
+.ansi-bg-47,
+.ansi-bg-107 {
+  background: #8a857d;
+}
+
 .badge-npm {
   border-color: transparent;
   background: var(--color-faster-soft);

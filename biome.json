@@ -10,7 +10,8 @@
       "!target",
       "!**/benchmarks/results",
       "!**/*.md",
-      "!packages/string-width/tests/upstream"
+      "!packages/string-width/tests/upstream",
+      "!packages/wrap-ansi/tests/upstream"
     ]
   },
   "formatter": {

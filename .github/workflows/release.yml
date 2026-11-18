@@ -197,11 +197,18 @@ jobs:
           path: ${{ env.PACKAGE_DIR }}/artifacts
       - name: Publish the platform packages, then the main package
         working-directory: ${{ env.PACKAGE_DIR }}
-        # No token: npm authenticates this workflow through trusted publishing, configured on
-        # npmjs.com for every published package (docs/RELEASING.md).
+        # npm authenticates this workflow through trusted publishing, configured on npmjs.com for
+        # every published package. The first release of a new package cannot use it (the package
+        # must exist first): for that release only, add a temporary NPM_TOKEN secret, which is used
+        # when present (docs/RELEASING.md).
         env:
           NPM_CONFIG_PROVENANCE: "true"
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          if [ -n "${NPM_TOKEN}" ]; then
+            echo "Using the NPM_TOKEN secret (first release of a new package)."
+            npm config set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"
+          fi
           pnpm exec napi create-npm-dirs
           pnpm exec napi artifacts --output-dir artifacts --npm-dir npm
           pnpm exec napi pre-publish --npm-dir npm --no-gh-release

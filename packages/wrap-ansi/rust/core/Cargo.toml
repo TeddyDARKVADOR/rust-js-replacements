@@ -1,0 +1,18 @@
+[package]
+name = "wrap-ansi-core"
+version = "0.1.0"
+description = "Word wrapping of strings with ANSI escape codes, compatible with the wrap-ansi npm package."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+# Shared Unicode property tables only (string_width_core::unicode). The width rules of
+# string-width 8.3.0, which wrap-ansi 10.0.2 depends on, are implemented in this crate.
+string-width-core = { path = "../../../string-width/rust/core" }
+unicode-normalization = "0.1.26"
+unicode-segmentation = "1.13.3"
+
+[lints]
+workspace = true

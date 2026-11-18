@@ -80,6 +80,7 @@ Node.js binding (NAPI-RS)     WebAssembly binding (wasm-bindgen)
 | --- | --- |
 | One Rust workspace and one pnpm workspace | Single lockfiles, shared lints and profiles, one CI. |
 | No shared core across packages | Packages stay independent; share code only when two packages genuinely need it. |
+| wrap-ansi reuses the Unicode tables of string-width | `wrap-ansi-core` depends on `string-width-core` only for `string_width_core::unicode` (property lookups). Its width rules (string-width 8.3.0) and all wrapping logic live in `packages/wrap-ansi`, so changing one package's algorithm never changes the other. |
 | NAPI-RS 3 for Node.js | Standard tooling for Rust addons, generates the platform loader and types. |
 | wasm-bindgen CLI directly, not wasm-pack | One tool fewer; the CLI version is pinned to the crate version. |
 | `--target web` for WebAssembly | Works with bundlers (Vite, webpack) through `new URL(..., import.meta.url)` and in plain browsers. |

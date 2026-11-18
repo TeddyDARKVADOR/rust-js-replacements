@@ -36,12 +36,12 @@ The workflow:
 
 ## Authentication: trusted publishing
 
-The workflow holds no npm token. npm authenticates it through **trusted publishing** (OpenID
-Connect), configured on npmjs.com for each published package: *Settings*, *Trusted Publisher*,
-GitHub Actions, repository `TeddyDARKVADOR/rust-js-replacements`, workflow `release.yml`, and in
-*Permissions* tick **npm publish**. New configurations allow only *npm stage publish* by default,
-and the workflow publishes directly, so without that box it fails with `403 OIDC permission denied
-for this action`. It requires npm 11.5.1 or later, which the workflow installs.
+Normally the workflow holds no npm token. npm authenticates it through **trusted publishing**
+(OpenID Connect), configured on npmjs.com for each published package: *Settings*, *Trusted
+Publisher*, GitHub Actions, repository `TeddyDARKVADOR/rust-js-replacements`, workflow
+`release.yml`, and in *Permissions* tick **npm publish**. New configurations allow only *npm stage
+publish* by default, and the workflow publishes directly, so without that box it fails with `403
+OIDC permission denied for this action`. It requires npm 11.5.1 or later, which the workflow installs.
 
 Trusted publishing can only be configured on a package that exists. The first release of a new
 package (and of each of its platform packages) therefore needs a temporary granular access token:
@@ -49,12 +49,14 @@ package (and of each of its platform packages) therefore needs a temporary granu
 1. npmjs.com, *Access Tokens*, *Generate New Token*, *Granular Access Token*, with
    *Bypass two-factor authentication* checked (it is off by default and cannot be added later;
    without it, `npm publish` fails with `EOTP`), *Read and write* on the `@rust-js-replacements`
-   scope.
-2. Add it as the GitHub secret `NPM_TOKEN`, and in the publish step of `release.yml`, set
-   `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` and `registry-url: https://registry.npmjs.org` in
-   `actions/setup-node`.
-3. After the release, configure trusted publishing on every new package, revert the workflow, and
-   delete the token and the secret.
+   scope, and a short expiration.
+2. Add it as the GitHub repository secret `NPM_TOKEN` (*Settings*, *Secrets and variables*,
+   *Actions*). The publish step of `release.yml` uses this secret when it exists, and trusted
+   publishing otherwise; the workflow needs no change.
+3. Release as usual (tag and push, see below).
+4. After the release, configure trusted publishing on every new package (the main package and
+   each platform package, with **npm publish** ticked), then delete the `NPM_TOKEN` secret and the
+   token on npmjs.com, so that later releases go back to trusted publishing.
 
 npm stops accepting such tokens for direct publishing in January 2027. After that, create each new
 package by hand once (`npm publish` from your machine, with your 2FA code), then configure trusted

@@ -33,14 +33,53 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
+  packages/wrap-ansi:
+    devDependencies:
+      '@napi-rs/cli':
+        specifier: 3.10.12
+        version: 3.10.12(@emnapi/core@2.0.0-beta.3)(@emnapi/runtime@2.0.0-beta.3)(@types/node@22.20.5)
+      '@types/node':
+        specifier: 22.20.5
+        version: 22.20.5
+      ansi-styles:
+        specifier: 6.2.3
+        version: 6.2.3
+      chalk:
+        specifier: 5.6.2
+        version: 5.6.2
+      has-ansi:
+        specifier: 6.0.2
+        version: 6.0.2
+      string-width:
+        specifier: 8.3.0
+        version: 8.3.0
+      strip-ansi:
+        specifier: 7.2.0
+        version: 7.2.0
+      tinybench:
+        specifier: 6.2.3
+        version: 6.2.3
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+      wrap-ansi:
+        specifier: 10.0.2
+        version: 10.0.2
+
   website:
     dependencies:
       '@rust-js-replacements/string-width':
         specifier: workspace:*
         version: link:../packages/string-width
+      '@rust-js-replacements/wrap-ansi':
+        specifier: workspace:*
+        version: link:../packages/wrap-ansi
       string-width:
         specifier: 9.0.0
         version: 9.0.0
+      wrap-ansi:
+        specifier: 10.0.2
+        version: 10.0.2
     devDependencies:
       '@types/node':
         specifier: 22.20.5
@@ -934,11 +973,19 @@ packages:
     resolution: {integrity: sha512-XZ5apbzreCbXSKwPjJstu8R0zOi247w3XYwWxtwBXgpZrCyc1Ka7p9/xY0A9/diMewmHbEKz+FIraWaEWjlN5g==}
     engines: {node: '>=12'}
 
+  ansi-styles@6.2.3:
+    resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
+    engines: {node: '>=12'}
+
   argparse@3.0.4:
     resolution: {integrity: sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==}
 
   before-after-hook@4.0.0:
     resolution: {integrity: sha512-q6tR3RPqIB1pMiTRMFcZwuG5T8vwp+vUvEG0vuI6B+Rikh5BfPp2fQ82c925FOs+b0lcFQ8CFrL+KbilfZFhOQ==}
+
+  chalk@5.6.2:
+    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
   chardet@2.2.0:
     resolution: {integrity: sha512-rddelWYNPRrXq6PtNEN2S3f6t9ILzvqaN5pVgi4kqt9jHQaXIial9PznB5iSPVlQSLNaaH22ItWz3EJtQ10+OA==}
@@ -1000,6 +1047,10 @@ packages:
 
   get-east-asian-width@1.7.0:
     resolution: {integrity: sha512-XjH1AECxf0giL2V1aU8vKyRR2ppRUb5c0EvT7zuJTokQ74bNo52zOtghqdWIqrhUD79fo3x0WfKZdOqxF6LG1Q==}
+    engines: {node: '>=18'}
+
+  has-ansi@6.0.2:
+    resolution: {integrity: sha512-vAyM+6+jAYwSwz0/M0jYKfU9AvAMCz0kH791RsUhvMKGUHXled/3FjcQB3YiQ4Astj5srHdb6B2FHGIfZkOQNg==}
     engines: {node: '>=18'}
 
   iconv-lite@0.7.3:
@@ -1135,6 +1186,10 @@ packages:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
+  string-width@8.3.0:
+    resolution: {integrity: sha512-ZbmZM0JCihQN91dWnxoipT2KOEyHqEyfRXUyjuRhW8b/xnqPDoq4gWEVApTVa9db2wN8mmoikgFBbjh71+cGeQ==}
+    engines: {node: '>=20'}
+
   string-width@9.0.0:
     resolution: {integrity: sha512-2MOboAIRIszVGZVPA2Zqwj0ujd0o+xAZ5y2ft4OcD4kuVQ4phZxq0Sv7YTY8yaDA2CSMXch1EWTkJw+tTJZTzA==}
     engines: {node: '>=22'}
@@ -1215,6 +1270,10 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  wrap-ansi@10.0.2:
+    resolution: {integrity: sha512-6OLRNZqRntVGBm26ghZ5eZhCuWWyOkRCSn8XsOIuq5stpCE/tjLbdozd93naILZig0lmD8ANfRwnhn0DLeXGlg==}
+    engines: {node: '>=20'}
 
 snapshots:
 
@@ -1861,9 +1920,13 @@ snapshots:
 
   ansi-regex@6.6.0: {}
 
+  ansi-styles@6.2.3: {}
+
   argparse@3.0.4: {}
 
   before-after-hook@4.0.0: {}
+
+  chalk@5.6.2: {}
 
   chardet@2.2.0: {}
 
@@ -1903,6 +1966,10 @@ snapshots:
     optional: true
 
   get-east-asian-width@1.7.0: {}
+
+  has-ansi@6.0.2:
+    dependencies:
+      ansi-regex: 6.6.0
 
   iconv-lite@0.7.3:
     dependencies:
@@ -2011,6 +2078,11 @@ snapshots:
 
   source-map-js@1.2.2: {}
 
+  string-width@8.3.0:
+    dependencies:
+      get-east-asian-width: 1.7.0
+      strip-ansi: 7.2.0
+
   string-width@9.0.0:
     dependencies:
       get-east-asian-width: 1.7.0
@@ -2071,3 +2143,8 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.20.5
       fsevents: 2.3.3
+
+  wrap-ansi@10.0.2:
+    dependencies:
+      ansi-styles: 6.2.3
+      string-width: 8.3.0

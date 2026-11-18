@@ -44,6 +44,16 @@ use properties::{
     rgi_emoji_prefix_len, stray_emoji_modifier_count, zwj_pictographic_end,
 };
 
+/// Unicode property lookups behind [`string_width`], for other packages of this repository that
+/// measure text with the same data (wrap-ansi). They follow V8 and `get-east-asian-width` on
+/// Unicode [`UNICODE_VERSION`]. Using them does not change how [`string_width`] behaves.
+pub mod unicode {
+    pub use crate::is_prepended_concatenation_mark;
+    pub use crate::properties::{
+        east_asian_width, is_extended_pictographic, is_visible, rgi_emoji_prefix_len,
+    };
+}
+
 /// Unicode version of the character tables.
 pub const UNICODE_VERSION: &str = tables::UNICODE_VERSION;
 
@@ -180,7 +190,9 @@ fn single_code_unit_width(cluster: &str, ambiguous_as_wide: bool) -> Option<usiz
     })
 }
 
-fn is_prepended_concatenation_mark(character: char) -> bool {
+/// Whether the character is a spacing `Prepended_Concatenation_Mark` (for example, ARABIC NUMBER
+/// SIGN), which string-width 9.0.0 measures as visible.
+pub fn is_prepended_concatenation_mark(character: char) -> bool {
     matches!(
         character,
         '\u{600}'

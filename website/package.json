@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@rust-js-replacements/string-width": "workspace:*",
-    "string-width": "9.0.0"
+    "@rust-js-replacements/wrap-ansi": "workspace:*",
+    "string-width": "9.0.0",
+    "wrap-ansi": "10.0.2"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

@@ -20,13 +20,13 @@ fn in_ranges(ranges: &[(u32, u32)], character: char) -> bool {
 }
 
 /// Whether string-width treats the character as visible (printing).
-pub(crate) fn is_visible(character: char) -> bool {
+pub fn is_visible(character: char) -> bool {
     matches!(character, '\u{20}'..='\u{7E}') || !in_ranges(tables::INVISIBLE, character)
 }
 
 /// East Asian Width as computed by `get-east-asian-width`: 2 for Wide and Fullwidth, 2 for
 /// Ambiguous when `ambiguous_as_wide` is set, and 1 otherwise.
-pub(crate) fn east_asian_width(character: char, ambiguous_as_wide: bool) -> usize {
+pub fn east_asian_width(character: char, ambiguous_as_wide: bool) -> usize {
     if character.is_ascii() {
         return 1;
     }
@@ -52,7 +52,8 @@ pub(crate) fn is_emoji_modifier_base(character: char) -> bool {
     in_ranges(tables::EMOJI_MODIFIER_BASE, character)
 }
 
-pub(crate) fn is_extended_pictographic(character: char) -> bool {
+/// Whether the character has the `Extended_Pictographic` property.
+pub fn is_extended_pictographic(character: char) -> bool {
     in_ranges(tables::EXTENDED_PICTOGRAPHIC, character)
 }
 
@@ -61,7 +62,7 @@ pub(crate) fn is_regional_indicator(character: char) -> bool {
 }
 
 /// Byte length of the longest `\p{RGI_Emoji}` match at the start of `text`.
-pub(crate) fn rgi_emoji_prefix_len(text: &str) -> Option<usize> {
+pub fn rgi_emoji_prefix_len(text: &str) -> Option<usize> {
     // Byte offsets of the end of the first 2..=MAX code points.
     let mut ends = [0_usize; tables::RGI_EMOJI_SEQUENCE_MAX_CHARS];
     let mut count = 0;
