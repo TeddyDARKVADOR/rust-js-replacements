@@ -38,8 +38,10 @@ The workflow:
 
 The workflow holds no npm token. npm authenticates it through **trusted publishing** (OpenID
 Connect), configured on npmjs.com for each published package: *Settings*, *Trusted Publisher*,
-GitHub Actions, repository `TeddyDARKVADOR/rust-js-replacements`, workflow `release.yml`. It
-requires npm 11.5.1 or later, which the workflow installs.
+GitHub Actions, repository `TeddyDARKVADOR/rust-js-replacements`, workflow `release.yml`, and in
+*Permissions* tick **npm publish**. New configurations allow only *npm stage publish* by default,
+and the workflow publishes directly, so without that box it fails with `403 OIDC permission denied
+for this action`. It requires npm 11.5.1 or later, which the workflow installs.
 
 Trusted publishing can only be configured on a package that exists. The first release of a new
 package (and of each of its platform packages) therefore needs a temporary granular access token:
